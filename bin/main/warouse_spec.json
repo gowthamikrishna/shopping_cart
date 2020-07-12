@@ -1,0 +1,45 @@
+{
+	"warehouse": [
+		{
+			"companyName": "HUL",
+			"location": "Maharastra",
+			"products": [
+				{
+					"quantity": 1,
+					"productName": "Dove",
+					"productType": "soap",
+					"unitprice": 39.99,
+					"currency": "INR",
+					"discount": {
+						"amount": 1,
+						"type": "percentage"
+					}
+				}
+			]
+		}
+	],
+	"tax": [
+		{
+			"productType": "soap",
+			"taxRate": 12.5
+		},
+		{
+			"productType": "deo",
+			"taxRate": 12.5
+		}
+	],
+	"offers": [
+		{
+			"isApplicable": false,
+			"productType": "soap",
+			"forCount": 1,
+			"offerCount": 1
+		},
+		{
+			"isApplicable": false,
+			"productType": "deo",
+			"forCount": 1,
+			"offerCount": 1
+		}
+	]
+}
