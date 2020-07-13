@@ -1,0 +1,38 @@
+{
+	"warehouse": [
+		{
+			"companyName": "HUL",
+			"location": "Maharastra",
+			"products": [
+				{
+					"quantity": 5,
+					"productName": "Dove",
+					"productType": "soap",
+					"unitprice": 39.99,
+					"currency": "INR"
+				},
+				{
+					"quantity": 4,
+					"productName": "Axe",
+					"productType": "deo",
+					"unitprice": 89.99,
+					"currency": "INR"
+				}
+			]
+		}
+	],
+	"tax": [
+		{
+			"productType": "soap",
+			"taxRate": 12.5
+		},
+		{
+			"productType": "deo",
+			"taxRate": 12.5
+		}
+	],
+	"globalDiscount":{
+		"minPurchase":500,
+		"percentageDiscount":20
+	}
+}

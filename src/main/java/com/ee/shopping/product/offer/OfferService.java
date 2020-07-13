@@ -10,4 +10,15 @@ public interface OfferService {
 	OfferModel getOfferForProduct(ProductType productType);
 
 	int applyOffer(CartItem cartItem);
+
+	/**
+	 * For global offers
+	 * 
+	 * @param gloablOffer
+	 */
+	void setGlobalOffer(GlobalOfferModel gloablOffer);
+
+	GlobalOfferModel getGlobalOffer();
+
+	void applyGlobalOffer(CartItem cartItem);
 }

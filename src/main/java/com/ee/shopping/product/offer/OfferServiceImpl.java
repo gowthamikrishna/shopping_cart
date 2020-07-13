@@ -7,7 +7,8 @@ import com.ee.shopping.product.ProductType;
 import com.ee.shopping.services.cart.CartItem;
 
 public class OfferServiceImpl implements OfferService {
-	Map<ProductType, OfferModel> OfferMapping = new ConcurrentHashMap<>();
+	private Map<ProductType, OfferModel> OfferMapping = new ConcurrentHashMap<>();
+	private GlobalOfferModel globalOffer;
 
 	@Override
 	public void setOfferForProductType(OfferModel offer) {
@@ -39,6 +40,24 @@ public class OfferServiceImpl implements OfferService {
 	public void clear() {
 		if (OfferMapping != null) {
 			OfferMapping.clear();
+		}
+	}
+
+	@Override
+	public GlobalOfferModel getGlobalOffer() {
+		return globalOffer;
+	}
+
+	@Override
+	public void setGlobalOffer(GlobalOfferModel gloablOffer) {
+		this.globalOffer = gloablOffer;
+	}
+
+	@Override
+	public void applyGlobalOffer(CartItem cartItem) {
+		if (globalOffer != null && globalOffer.getPercentageDiscount() > 0) {
+			double productPrice = cartItem.getProduct().getPrice();
+			cartItem.getProduct().setPrice((globalOffer.getPercentageDiscount() / 100) * productPrice);
 		}
 	}
 

@@ -144,4 +144,25 @@ public class TestShopping {
 		}
 	}
 
+	@Test
+	public void testStep6() {
+		String specFile = "step6.json";
+		Customer customer = TestUtils.getTestCustomer();
+		Cart cart = TestUtils.getCartLoadedUsingSpec(specFile, customer);
+		List<CartItem> items = cart.showCart();
+		double totalTax = 0;
+		double totalCost = 0;
+		for (CartItem cartItem : items) {
+			totalTax = totalTax + cartItem.getTax();
+			totalCost = totalCost + cartItem.getTotalCost();
+			if (ProductType.SOAP == cartItem.getProduct().getProductType()) {
+				assertEquals(cartItem.getQuantity(), 5);
+			} else if (ProductType.DEO == cartItem.getProduct().getProductType()) {
+				assertEquals(cartItem.getQuantity(), 4);
+			}
+		}
+		assertEquals(totalTax, 56.00, Math.abs(totalTax - 56.00));
+		assertEquals(totalCost, 503.93, Math.abs(totalCost - 503.93));
+	}
+
 }

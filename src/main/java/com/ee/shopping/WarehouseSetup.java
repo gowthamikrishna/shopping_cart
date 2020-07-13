@@ -21,6 +21,7 @@ import com.ee.shopping.product.DiscountedItem;
 import com.ee.shopping.product.PricedItem;
 import com.ee.shopping.product.Product;
 import com.ee.shopping.product.ProductType;
+import com.ee.shopping.product.offer.GlobalOfferModel;
 import com.ee.shopping.product.offer.OfferModel;
 import com.ee.shopping.product.offer.OfferServiceImpl;
 import com.ee.shopping.services.inventory.InventoryServiceImpl;
@@ -47,7 +48,7 @@ public class WarehouseSetup {
 
 		return 0;
 	}
-	
+
 	public static boolean toBool(JSONObject json, String field) {
 		if (json.containsKey(field)) {
 			return Boolean.valueOf(json.get(field).toString());
@@ -137,16 +138,21 @@ public class WarehouseSetup {
 			for (int i = 0; i < offersMapping.size(); i++) {
 				JSONObject offer = (JSONObject) offersMapping.get(i);
 				ProductType productType = ProductType.of((String) offer.get("productType"));
-				boolean isApplicable =toBool(offer,"isApplicable");
-				int forCount = toInt(offer,"forCount");
-				int offerCount = toInt(offer,"offerCount");
-				int offerDiscount = toInt(offer,"discount");
-				ShoppingService.getOfferService()
-						.setOfferForProductType(new OfferModel(isApplicable, productType, forCount, offerCount,offerDiscount));
+				boolean isApplicable = toBool(offer, "isApplicable");
+				int forCount = toInt(offer, "forCount");
+				int offerCount = toInt(offer, "offerCount");
+				int offerDiscount = toInt(offer, "discount");
+				ShoppingService.getOfferService().setOfferForProductType(
+						new OfferModel(isApplicable, productType, forCount, offerCount, offerDiscount));
 			}
 		}
-		System.out.println("Configuration loaded successfully");
-
+		JSONObject globalOffer = getField(spec, "globalDiscount");
+		if (globalOffer != null) {
+			double minPurchase = toDouble(globalOffer, "minPurchase");
+			int percentageDiscount = toInt(globalOffer, "percentageDiscount");
+			GlobalOfferModel model = new GlobalOfferModel(minPurchase, percentageDiscount);
+			ShoppingService.getOfferService().setGlobalOffer(model);
+		}
 	};
 
 	private static void addProductToWarehouse(Company company, Integer quantity, String productName, String productType,

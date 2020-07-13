@@ -19,7 +19,26 @@ public class PaymentServiceImpl implements PaymentService {
 		return calculateTotalPrice(customer, cart.showCart());
 	}
 
+	private boolean checkEligibilityForGlobalOffer(List<CartItem> cartItems) {
+		boolean isEligible = false;
+		if (ShoppingService.getOfferService().getGlobalOffer() != null
+				&& ShoppingService.getOfferService().getGlobalOffer().getPercentageDiscount() > 0) {
+			double totalCost = 0;
+			for (CartItem cartItem : cartItems) {
+				int quantity = cartItem.getQuantity();
+				double price = cartItem.getProduct().getPrice();
+				totalCost = totalCost + (quantity * price);
+			}
+			if (ShoppingService.getOfferService().getGlobalOffer().getMinPurchase() > 0
+					&& totalCost > ShoppingService.getOfferService().getGlobalOffer().getMinPurchase()) {
+				isEligible = true;
+			}
+		}
+		return isEligible;
+	}
+
 	private double calculateTotalPrice(Customer customer, List<CartItem> cartItems) {
+		boolean isEligibleForGlobalOffer = checkEligibilityForGlobalOffer(cartItems);
 		double totalPrice = 0;
 		for (CartItem cartItem : cartItems) {
 			Product product = cartItem.getProduct();
@@ -37,7 +56,9 @@ public class PaymentServiceImpl implements PaymentService {
 			} else if (product instanceof PricedProduct) {
 				finalPrice = ((PricedProduct) product).getPrice();
 			}
-
+			if(isEligibleForGlobalOffer) {
+				ShoppingService.getOfferService().applyGlobalOffer(cartItem);
+			}
 			double tax = ShoppingService.getTaxService().calculateTaxForProduct(product, quantity);
 			cartItem.setCost(finalPrice * quantity);
 			cartItem.setTax(tax);
