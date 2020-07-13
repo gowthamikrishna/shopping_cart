@@ -52,4 +52,11 @@ public class Order {
 		this.orderId = orderId;
 	}
 
+	@Override
+	public String toString() {
+		return "cart=" + cart + ", date=" + date + ", orderId=" + orderId + ", customer=" + customer;
+	}
+	
+	
+
 }

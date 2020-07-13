@@ -1,0 +1,17 @@
+{
+	"warehouse": [
+		{
+			"companyName": "HUL",
+			"location": "Maharastra",
+			"products": [
+				{
+					"quantity": 5,
+					"productName": "Dove",
+					"productType": "soap",
+					"unitprice": 39.99,
+					"currency": "INR"
+				}
+			]
+		}
+	]
+}

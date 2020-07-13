@@ -59,4 +59,11 @@ public class CartItem {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "product=" + product + ", quantity=" + quantity;
+	}
+	
+	
+
 }

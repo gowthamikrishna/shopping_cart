@@ -53,4 +53,10 @@ public enum CompanyProductTypeMapping {
 	public Map<Company, List<ProductType>> getAvailableSupplierAndTheirProducts() {
 		return getMap();
 	}
+
+	public void clear() {
+		if (productMapping != null) {
+			productMapping.clear();
+		}
+	}
 }

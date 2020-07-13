@@ -23,8 +23,17 @@ public enum TaxServiceImpl implements TaxService {
 
 	@Override
 	public double calculateTaxForProduct(Product product, int quanity) {
-		double taxRateToApply = (taxMapping.get(product.getProductType()) / 100);
+		if(taxMapping.get(product.getProductType())==null) {
+			return 0;
+		}
+		double taxRateToApply = taxMapping.get(product.getProductType()) / 100;
 		return ((PricedProduct) product).getPrice() * quanity * taxRateToApply;
+	}
+
+	public void clear() {
+		if (taxMapping != null) {
+			taxMapping.clear();
+		}
 	}
 
 }

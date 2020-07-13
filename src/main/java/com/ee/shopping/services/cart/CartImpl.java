@@ -1,5 +1,6 @@
 package com.ee.shopping.services.cart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ee.shopping.customer.Customer;
@@ -16,15 +17,22 @@ public class CartImpl implements Cart {
 		this.customer = customer;
 	}
 
+	private List<CartItem> getCart() {
+		if (cart == null) {
+			cart = new ArrayList<CartItem>();
+		}
+		return cart;
+	}
+
 	@Override
 	public void addItem(PricedProduct item, int quantity) {
 		CartItem cartItem = new CartItem(item);
 		quantity = quantity <= 0 ? 1 : quantity;
-		if (!cart.contains(cartItem)) {
+		if (!getCart().contains(cartItem)) {
 			cartItem.setQuantity(quantity);
-			cart.add(cartItem);
+			getCart().add(cartItem);
 		} else {
-			CartItem existingItem = cart.get(cart.indexOf(cartItem));
+			CartItem existingItem = getCart().get(getCart().indexOf(cartItem));
 			existingItem.setQuantity(existingItem.getQuantity() + quantity);
 		}
 	}
@@ -33,8 +41,8 @@ public class CartImpl implements Cart {
 	public void removeItem(PricedProduct item, int quantity) {
 		CartItem cartItem = new CartItem(item);
 		quantity = quantity > 0 ? quantity : 0;
-		if (cart.contains(cartItem)) {
-			CartItem existingItem = cart.get(cart.indexOf(cartItem));
+		if (getCart().contains(cartItem)) {
+			CartItem existingItem = getCart().get(getCart().indexOf(cartItem));
 			int newQuantity = existingItem.getQuantity() - quantity;
 			existingItem.setQuantity(newQuantity);
 		}
@@ -71,8 +79,12 @@ public class CartImpl implements Cart {
 	}
 
 	@Override
-	public Order checkout(Customer customer) {
-		return new Order(customer, cart);
+	public List<CartItem> showCart() {
+		return getCart();
 	}
 
+	@Override
+	public Order checkout(Customer customer) {
+		return new Order(customer, getCart());
+	}
 }

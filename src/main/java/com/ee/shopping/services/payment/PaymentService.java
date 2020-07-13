@@ -9,10 +9,10 @@ public interface PaymentService {
 	 * Calculates total chargeable amount on given cart
 	 * 
 	 * @param customer
-	 * @param orer
+	 * @param cart
 	 * @return
 	 */
-	double getTotalPrice(Customer customer, Cart orer);
+	double getTotalPrice(Customer customer, Cart cart);
 
 	/**
 	 * To do payment on given order

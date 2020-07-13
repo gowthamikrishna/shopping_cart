@@ -18,8 +18,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Override
 	public double getTotalPrice(Customer customer, Cart cart) {
-		Order order = cart.checkout(customer);
-		return calculateTotalPrice(customer, order.getCart());
+		return calculateTotalPrice(customer, cart.showCart());
 	}
 
 	private double calculateTotalPrice(Customer customer, List<CartItem> cartItems) {

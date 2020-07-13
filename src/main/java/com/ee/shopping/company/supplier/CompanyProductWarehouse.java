@@ -28,7 +28,7 @@ public enum CompanyProductWarehouse {
 	private List<Product> getCompanyBucket(Company company) {
 		List<Product> companyBucket = getMap().get(company);
 		if (companyBucket == null) {
-			companyBucket=new ArrayList<Product>();
+			companyBucket = new ArrayList<Product>();
 			getMap().put(company, companyBucket);
 		}
 
@@ -38,9 +38,10 @@ public enum CompanyProductWarehouse {
 	private CompanyProductWarehouse() {
 	}
 
-	private List<Product> listItemsByProductType(Company company, final ProductType productType) {
-		return getCompanyBucket(company).stream().filter(product -> product.getProductType() == productType)
-				.collect(Collectors.toList());
+	private List<Product> listItemsByProductType(Company company, final ProductType productType,int limit) {
+		List<Product> result = getCompanyBucket(company).stream()
+				.filter(product -> product.getProductType() == productType).limit(limit==0?Integer.MAX_VALUE:limit).collect(Collectors.toList());
+		return result;
 	}
 
 	/**
@@ -49,7 +50,7 @@ public enum CompanyProductWarehouse {
 	 * @param company
 	 */
 	public void accumulate(Company company, final ProductType productType, int quantity) {
-		List<Product> list = listItemsByProductType(company, productType);
+		List<Product> list = listItemsByProductType(company, productType,quantity);
 		int newQuantity = quantity;
 		if (list.size() > 0) {
 			newQuantity = quantity + list.size();
@@ -79,8 +80,9 @@ public enum CompanyProductWarehouse {
 	/**
 	 * To supply the product by type for the given company. If warehouse of company
 	 * has less than required quantity ,then products manufactured and added to
-	 * supply.
-	 * if quantity is 0, then all items of given product type will be returned
+	 * supply. if quantity is 0, then all items of given product type will be
+	 * returned
+	 * 
 	 * @param company
 	 * @param productType
 	 * @param name
@@ -88,7 +90,7 @@ public enum CompanyProductWarehouse {
 	 * @return List of Products by type for the given company
 	 */
 	public List<Product> supply(Company company, final ProductType productType, int quantity) {
-		List<Product> availableProductForType =listItemsByProductType(company, productType);
+		List<Product> availableProductForType = listItemsByProductType(company, productType,quantity);
 
 		if (availableProductForType.size() < quantity) {
 			int extraNeededQuantity = quantity - availableProductForType.size();
@@ -110,6 +112,12 @@ public enum CompanyProductWarehouse {
 		getCompanyBucket(company).removeAll(availableProductForType);
 
 		return availableProductForType;
+	}
+
+	public void clear() {
+		if (warehouse != null) {
+			warehouse.clear();
+		}
 	}
 
 }

@@ -30,4 +30,10 @@ public enum OfferServiceImpl implements OfferService {
 		return extraItems;
 	}
 
+	public void clear() {
+		if (OfferMapping != null) {
+			OfferMapping.clear();
+		}
+	}
+
 }
