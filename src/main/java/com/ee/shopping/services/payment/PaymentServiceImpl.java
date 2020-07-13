@@ -39,10 +39,12 @@ public class PaymentServiceImpl implements PaymentService {
 			}
 
 			double tax = ShoppingService.getTaxService().calculateTaxForProduct(product, quantity);
-
-			totalPrice = totalPrice + (finalPrice * quantity);
+			cartItem.setCost(finalPrice * quantity);
+			cartItem.setTax(tax);
 			// apply tax
-			totalPrice = totalPrice + tax;
+			double itemsTotalCost = cartItem.getCost() + cartItem.getTax();
+			cartItem.setTotalCost(itemsTotalCost);
+			totalPrice = totalPrice + itemsTotalCost;
 		}
 
 		// rounding off 2 decimal digit

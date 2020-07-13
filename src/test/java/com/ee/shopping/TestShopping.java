@@ -9,8 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ee.shopping.customer.Customer;
+import com.ee.shopping.product.ProductType;
 import com.ee.shopping.services.cart.Cart;
 import com.ee.shopping.services.cart.CartItem;
+import com.ee.shopping.services.inventory.ShoppingService;
 
 public class TestShopping {
 
@@ -43,6 +45,49 @@ public class TestShopping {
 		assertEquals(items.get(0).getQuantity(), 8);
 		double totalCost = TestUtils.getPriceOfCart(cart, customer);
 		assertEquals(totalCost, 319.92, Math.abs(totalCost - 199.95));
+	}
+
+	@Test
+	public void testStep3() {
+		String specFile = "step3.json";
+		Customer customer = TestUtils.getTestCustomer();
+		Cart cart = TestUtils.getCartLoadedUsingSpec(specFile, customer);
+		List<CartItem> items = cart.showCart();
+		double totalTax = 0;
+		for (CartItem cartItem : items) {
+			totalTax = totalTax + cartItem.getTax();
+			if (ProductType.SOAP == cartItem.getProduct().getProductType()) {
+				assertEquals(cartItem.getQuantity(), 2);
+			} else if (ProductType.DEO == cartItem.getProduct().getProductType()) {
+				assertEquals(cartItem.getQuantity(), 2);
+			}
+		}
+		assertEquals(totalTax, 35.00, Math.abs(totalTax - 35.00));
+		double totalCost = TestUtils.getPriceOfCart(cart, customer);
+		assertEquals(totalCost, 314.96, Math.abs(totalCost - 314.96));
+	}
+
+	@Test
+	public void testStep4() {
+		String specFile = "step4.json";
+		Customer customer = TestUtils.getTestCustomer();
+		Cart cart = TestUtils.getCartLoadedUsingSpec(specFile, customer);
+		List<CartItem> items = cart.showCart();
+		double totalTax = 0;
+		for (CartItem cartItem : items) {
+			totalTax = totalTax + cartItem.getTax();
+			if (ProductType.SOAP == cartItem.getProduct().getProductType()) {
+				ShoppingService.getOfferService().applyOffer(cartItem);
+				assertEquals(cartItem.getQuantity(), 3);
+				assertEquals(cartItem.getCost(), 89.98, Math.abs(cartItem.getCost() - 89.98));
+				assertEquals(cartItem.getTax(), 10.00, Math.abs(cartItem.getTax() - 10.00));
+			} else if (ProductType.DEO == cartItem.getProduct().getProductType()) {
+				assertEquals(cartItem.getQuantity(), 1);
+			}
+		}
+		double totalCost = TestUtils.getPriceOfCart(cart, customer);
+		double expectedTotalCost = 89.98 + 89.99;
+		assertEquals(totalCost, expectedTotalCost, Math.abs(totalCost - expectedTotalCost));
 	}
 
 }

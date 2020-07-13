@@ -11,6 +11,34 @@ import com.ee.shopping.product.PricedProduct;
 public class CartItem {
 	private PricedProduct product;
 	private int quantity;
+	private double cost;
+	private double tax;
+
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
+	public double getTax() {
+		return tax;
+	}
+
+	public void setTax(double tax) {
+		this.tax = tax;
+	}
+
+	private double totalCost;
+
+	public double getTotalCost() {
+		return totalCost;
+	}
+
+	public void setTotalCost(double totalCost) {
+		this.totalCost = totalCost;
+	}
 
 	public CartItem(PricedProduct product) {
 		super();
@@ -61,9 +89,8 @@ public class CartItem {
 
 	@Override
 	public String toString() {
-		return "product=" + product + ", quantity=" + quantity;
+		return "product=" + product + ", quantity=" + quantity + ", cost=" + cost + ", tax=" + tax + ", totalCost="
+				+ totalCost;
 	}
-	
-	
 
 }

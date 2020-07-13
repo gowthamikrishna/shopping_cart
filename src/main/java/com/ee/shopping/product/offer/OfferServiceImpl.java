@@ -24,7 +24,8 @@ public class OfferServiceImpl implements OfferService {
 		int extraItems = 0;
 		OfferModel offer = OfferMapping.get(cartItem.getProduct().getProductType());
 		if (offer.isApplicable()) {
-			extraItems = (cartItem.getQuantity() * offer.getOfferCount()) / offer.getForCount();
+			extraItems = cartItem.getQuantity()/offer.getForCount() * offer.getOfferCount();
+			cartItem.setQuantity(cartItem.getQuantity()+extraItems);
 		}
 		return extraItems;
 	}
