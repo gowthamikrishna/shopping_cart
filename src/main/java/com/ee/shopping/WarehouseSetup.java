@@ -47,6 +47,13 @@ public class WarehouseSetup {
 
 		return 0;
 	}
+	
+	public static boolean toBool(JSONObject json, String field) {
+		if (json.containsKey(field)) {
+			return Boolean.valueOf(json.get(field).toString());
+		}
+		return false;
+	}
 
 	public static String asString(JSONObject json, String field) {
 		if (json.containsKey(field)) {
@@ -130,11 +137,12 @@ public class WarehouseSetup {
 			for (int i = 0; i < offersMapping.size(); i++) {
 				JSONObject offer = (JSONObject) offersMapping.get(i);
 				ProductType productType = ProductType.of((String) offer.get("productType"));
-				boolean isApplicable = Boolean.valueOf(offer.get("isApplicable").toString());
-				int forCount = Integer.valueOf(offer.get("forCount").toString());
-				int offerCount = Integer.valueOf(offer.get("offerCount").toString());
+				boolean isApplicable =toBool(offer,"isApplicable");
+				int forCount = toInt(offer,"forCount");
+				int offerCount = toInt(offer,"offerCount");
+				int offerDiscount = toInt(offer,"discount");
 				ShoppingService.getOfferService()
-						.setOfferForProductType(new OfferModel(isApplicable, productType, forCount, offerCount));
+						.setOfferForProductType(new OfferModel(isApplicable, productType, forCount, offerCount,offerDiscount));
 			}
 		}
 		System.out.println("Configuration loaded successfully");

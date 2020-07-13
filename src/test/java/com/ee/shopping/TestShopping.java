@@ -127,4 +127,21 @@ public class TestShopping {
 		assertEquals(totalCost3, expectedTotalCost3, Math.abs(totalCost3 - expectedTotalCost3));
 	}
 
+	@Test
+	public void testStep5() {
+		String specFile = "step5.json";
+		Customer customer = TestUtils.getTestCustomer();
+		Cart cart = TestUtils.getCartLoadedUsingSpec(specFile, customer);
+		List<CartItem> items = cart.showCart();
+		double totalTax = 0;
+		for (CartItem cartItem : items) {
+			totalTax = totalTax + cartItem.getTax();
+			if (ProductType.SOAP == cartItem.getProduct().getProductType()) {
+				assertEquals(cartItem.getQuantity(), 2);
+				assertEquals(cartItem.getCost(), 67.48, Math.abs(cartItem.getCost() - 67.48));
+				assertEquals(cartItem.getTax(), 7.50, Math.abs(cartItem.getTax() - 7.50));
+			}
+		}
+	}
+
 }

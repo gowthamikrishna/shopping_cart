@@ -8,13 +8,23 @@ public class OfferModel {
 	private ProductType productType;
 	private int forCount;
 	private int offerCount;
+	private int offerDiscount;
 
-	public OfferModel(boolean isApplicable, ProductType productType, int forCount, int offerCount) {
+	public int getOfferDiscount() {
+		return offerDiscount;
+	}
+
+	public void setOfferDiscount(int offerDiscount) {
+		this.offerDiscount = offerDiscount;
+	}
+
+	public OfferModel(boolean isApplicable, ProductType productType, int forCount, int offerCount, int offerDiscount) {
 		super();
 		this.isApplicable = isApplicable;
 		this.productType = productType;
 		this.forCount = forCount;
 		this.offerCount = offerCount;
+		this.offerDiscount = offerDiscount;
 	}
 
 	public boolean isApplicable() {
