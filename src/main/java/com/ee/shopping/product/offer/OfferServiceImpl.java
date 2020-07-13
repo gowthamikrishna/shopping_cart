@@ -6,8 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ee.shopping.product.ProductType;
 import com.ee.shopping.services.cart.CartItem;
 
-public enum OfferServiceImpl implements OfferService {
-	instance;
+public class OfferServiceImpl implements OfferService {
 	Map<ProductType, OfferModel> OfferMapping = new ConcurrentHashMap<>();
 
 	@Override

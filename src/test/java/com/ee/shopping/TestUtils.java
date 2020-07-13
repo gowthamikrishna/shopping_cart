@@ -1,5 +1,8 @@
 package com.ee.shopping;
 
+import static com.ee.shopping.services.inventory.ShoppingService.getCompanyProductTypeMapping;
+import static com.ee.shopping.services.inventory.ShoppingService.getInventoryService;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +15,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.ee.shopping.company.supplier.Company;
-import com.ee.shopping.company.supplier.CompanyProductTypeMapping;
 import com.ee.shopping.customer.Customer;
 import com.ee.shopping.product.PricedProduct;
 import com.ee.shopping.product.Product;
@@ -20,13 +22,11 @@ import com.ee.shopping.product.ProductType;
 import com.ee.shopping.services.cart.Cart;
 import com.ee.shopping.services.cart.CartImpl;
 import com.ee.shopping.services.inventory.InventoryService;
-import com.ee.shopping.services.inventory.InventoryServiceImpl;
 import com.ee.shopping.services.order.Order;
 import com.ee.shopping.services.payment.PaymentService;
 import com.ee.shopping.services.payment.PaymentServiceImpl;
 
 public class TestUtils {
-
 	public static JSONObject readFileIntoJsonObject(String fileName) {
 		JSONObject spec = null;
 		try {
@@ -53,9 +53,10 @@ public class TestUtils {
 	public static Cart addItemsToCartUsingSpec(String specFile, Customer customer) {
 		JSONObject spec = readFileIntoJsonObject(specFile);
 		WarehouseSetup.loadWarehouse(spec);
-		InventoryService inventoryService = InventoryServiceImpl.instance;
+		InventoryService inventoryService =getInventoryService();
+		inventoryService.setupInventory();
 		Cart cart = new CartImpl(customer);
-		Map<Company, List<ProductType>> allProductTypeFromSepc = CompanyProductTypeMapping.instance
+		Map<Company, List<ProductType>> allProductTypeFromSepc = getCompanyProductTypeMapping()
 				.getAvailableSupplierAndTheirProducts();
 		for (Company company : allProductTypeFromSepc.keySet()) {
 			for (ProductType productType : allProductTypeFromSepc.get(company)) {

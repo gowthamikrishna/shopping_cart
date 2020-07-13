@@ -13,8 +13,7 @@ import com.ee.shopping.product.ProductType;
  * @author kriGow
  *
  */
-public enum CompanyProductTypeMapping {
-	instance;
+public class CompanyProductTypeMapping {
 
 	Map<Company, List<ProductType>> productMapping;
 
@@ -35,9 +34,6 @@ public enum CompanyProductTypeMapping {
 		return companyBucket;
 	}
 
-	private CompanyProductTypeMapping() {
-	}
-
 	public void addProductTypeToCompany(Company company, ProductType productType) {
 		getCompanyBucket(company).add(productType);
 	}
@@ -52,11 +48,5 @@ public enum CompanyProductTypeMapping {
 
 	public Map<Company, List<ProductType>> getAvailableSupplierAndTheirProducts() {
 		return getMap();
-	}
-
-	public void clear() {
-		if (productMapping != null) {
-			productMapping.clear();
-		}
 	}
 }

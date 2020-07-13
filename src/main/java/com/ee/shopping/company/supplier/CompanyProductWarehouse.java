@@ -12,10 +12,9 @@ import com.ee.shopping.product.PricedItem;
 import com.ee.shopping.product.PricedProduct;
 import com.ee.shopping.product.Product;
 import com.ee.shopping.product.ProductType;
+import com.ee.shopping.services.inventory.ShoppingService;
 
-public enum CompanyProductWarehouse {
-	instance;
-
+public class CompanyProductWarehouse {
 	Map<Company, List<Product>> warehouse;
 
 	private Map<Company, List<Product>> getMap() {
@@ -35,12 +34,10 @@ public enum CompanyProductWarehouse {
 		return companyBucket;
 	}
 
-	private CompanyProductWarehouse() {
-	}
-
-	private List<Product> listItemsByProductType(Company company, final ProductType productType,int limit) {
+	private List<Product> listItemsByProductType(Company company, final ProductType productType, int limit) {
 		List<Product> result = getCompanyBucket(company).stream()
-				.filter(product -> product.getProductType() == productType).limit(limit==0?Integer.MAX_VALUE:limit).collect(Collectors.toList());
+				.filter(product -> product.getProductType() == productType)
+				.limit(limit == 0 ? Integer.MAX_VALUE : limit).collect(Collectors.toList());
 		return result;
 	}
 
@@ -50,7 +47,7 @@ public enum CompanyProductWarehouse {
 	 * @param company
 	 */
 	public void accumulate(Company company, final ProductType productType, int quantity) {
-		List<Product> list = listItemsByProductType(company, productType,quantity);
+		List<Product> list = listItemsByProductType(company, productType, quantity);
 		int newQuantity = quantity;
 		if (list.size() > 0) {
 			newQuantity = quantity + list.size();
@@ -60,7 +57,8 @@ public enum CompanyProductWarehouse {
 	}
 
 	public void addProductToWarehouse(Company company, PricedProduct product) {
-		if (CompanyProductTypeMapping.instance.isCompanyMaufactureProduct(company, product.getProductType())) {
+		if (ShoppingService.getCompanyProductTypeMapping().isCompanyMaufactureProduct(company,
+				product.getProductType())) {
 			getCompanyBucket(company).add(product);
 		} else {
 			throw new UnSupportedProductException(String.format("Company %s doesn't support product type %s ",
@@ -69,7 +67,8 @@ public enum CompanyProductWarehouse {
 	}
 
 	public void removeProductFromWarehouse(Company company, PricedProduct product) {
-		if (CompanyProductTypeMapping.instance.isCompanyMaufactureProduct(company, product.getProductType())) {
+		if (ShoppingService.getCompanyProductTypeMapping().isCompanyMaufactureProduct(company,
+				product.getProductType())) {
 			getCompanyBucket(company).add(product);
 		} else {
 			throw new NoProductFoundException(String.format("No Prodct found %s in  Company %s's warehouse",
@@ -90,11 +89,11 @@ public enum CompanyProductWarehouse {
 	 * @return List of Products by type for the given company
 	 */
 	public List<Product> supply(Company company, final ProductType productType, int quantity) {
-		List<Product> availableProductForType = listItemsByProductType(company, productType,quantity);
+		List<Product> availableProductForType = listItemsByProductType(company, productType, quantity);
 
 		if (availableProductForType.size() < quantity) {
 			int extraNeededQuantity = quantity - availableProductForType.size();
-			Product refProduct = ProductTypeToProductMapping.instance().getProductForPriceReference(company,
+			Product refProduct = ShoppingService.getProductTypeToProductMapping().getProductForPriceReference(company,
 					productType);
 			Product product = null;
 			for (int i = 0; i < extraNeededQuantity; i++) {
@@ -112,12 +111,6 @@ public enum CompanyProductWarehouse {
 		getCompanyBucket(company).removeAll(availableProductForType);
 
 		return availableProductForType;
-	}
-
-	public void clear() {
-		if (warehouse != null) {
-			warehouse.clear();
-		}
 	}
 
 }

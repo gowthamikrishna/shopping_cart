@@ -21,5 +21,17 @@ public interface InventoryService {
 	 */
 	List<Product> getInventoryByProductType(ProductType productType);
 
+	/**
+	 * To remove items from inventory ,once payment is done
+	 * 
+	 * @param product
+	 * @param quanity
+	 */
 	void removeProduct(Product product, int quanity);
+
+	/**
+	 * To load products and keep ready inventory. Load all products from all
+	 * companies warehouse
+	 */
+	void setupInventory();
 }

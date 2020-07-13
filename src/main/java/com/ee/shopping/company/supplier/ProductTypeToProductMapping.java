@@ -6,14 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ee.shopping.product.Product;
 import com.ee.shopping.product.ProductType;
 
-public enum ProductTypeToProductMapping {
-	instance;
+public class ProductTypeToProductMapping {
 	// priceMapping by product type in a company
 	Map<Company, Map<ProductType, Product>> productsByType;
-
-	public static ProductTypeToProductMapping instance() {
-		return instance;
-	}
 
 	private Map<Company, Map<ProductType, Product>> getMap() {
 		if (productsByType == null) {
@@ -30,10 +25,6 @@ public enum ProductTypeToProductMapping {
 		}
 
 		return companyBucket;
-	}
-
-	private ProductTypeToProductMapping() {
-
 	}
 
 	public void addProductToProductType(Company company, ProductType productType, Product product) {

@@ -6,31 +6,25 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.ee.shopping.company.supplier.Company;
-import com.ee.shopping.company.supplier.CompanyProductTypeMapping;
-import com.ee.shopping.company.supplier.CompanyProductWarehouse;
 import com.ee.shopping.product.Product;
 import com.ee.shopping.product.ProductType;
 
-public enum InventoryServiceImpl implements InventoryService {
+public class InventoryServiceImpl implements InventoryService {
 
-	instance;
 	List<Product> inventory;
 
-	private InventoryServiceImpl() {
+	public InventoryServiceImpl() {
 		this.inventory = new ArrayList<Product>();
-		init();
 	}
 
-	/**
-	 * Load all products from all companies warehouse
-	 */
-	private void init() {
-		Map<Company, List<ProductType>> supplierAndProducts = CompanyProductTypeMapping.instance
+	@Override
+	public void setupInventory() {
+		Map<Company, List<ProductType>> supplierAndProducts = ShoppingService.getCompanyProductTypeMapping()
 				.getAvailableSupplierAndTheirProducts();
 		for (Company company : supplierAndProducts.keySet()) {
 			if (supplierAndProducts.get(company) != null) {
 				for (ProductType productType : supplierAndProducts.get(company)) {
-					List<Product> companiesProductsByType = CompanyProductWarehouse.instance.supply(company,
+					List<Product> companiesProductsByType = ShoppingService.getCompanyProductWarehouse().supply(company,
 							productType, 0);
 					if (companiesProductsByType != null) {
 						this.inventory.addAll(companiesProductsByType);
@@ -61,6 +55,10 @@ public enum InventoryServiceImpl implements InventoryService {
 		} else {
 			throw new OutOfStockException("Out Of Stock on the product ,please try again");
 		}
+	}
+
+	public void clear() {
+		inventory.clear();
 	}
 
 }

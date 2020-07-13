@@ -7,8 +7,7 @@ import com.ee.shopping.product.PricedProduct;
 import com.ee.shopping.product.Product;
 import com.ee.shopping.product.ProductType;
 
-public enum TaxServiceImpl implements TaxService {
-	instance;
+public class TaxServiceImpl implements TaxService {
 	Map<ProductType, Double> taxMapping = new ConcurrentHashMap<ProductType, Double>();
 
 	@Override
@@ -23,7 +22,7 @@ public enum TaxServiceImpl implements TaxService {
 
 	@Override
 	public double calculateTaxForProduct(Product product, int quanity) {
-		if(taxMapping.get(product.getProductType())==null) {
+		if (taxMapping.get(product.getProductType()) == null) {
 			return 0;
 		}
 		double taxRateToApply = taxMapping.get(product.getProductType()) / 100;

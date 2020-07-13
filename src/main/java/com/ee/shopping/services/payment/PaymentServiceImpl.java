@@ -7,12 +7,10 @@ import com.ee.shopping.product.DiscountPricedProduct;
 import com.ee.shopping.product.DiscountType;
 import com.ee.shopping.product.PricedProduct;
 import com.ee.shopping.product.Product;
-import com.ee.shopping.product.offer.OfferServiceImpl;
 import com.ee.shopping.services.cart.Cart;
 import com.ee.shopping.services.cart.CartItem;
-import com.ee.shopping.services.inventory.InventoryServiceImpl;
+import com.ee.shopping.services.inventory.ShoppingService;
 import com.ee.shopping.services.order.Order;
-import com.ee.shopping.tax.TaxServiceImpl;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -40,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
 				finalPrice = ((PricedProduct) product).getPrice();
 			}
 
-			double tax = TaxServiceImpl.instance.calculateTaxForProduct(product, quantity);
+			double tax = ShoppingService.getTaxService().calculateTaxForProduct(product, quantity);
 
 			totalPrice = totalPrice + (finalPrice * quantity);
 			// apply tax
@@ -63,8 +61,8 @@ public class PaymentServiceImpl implements PaymentService {
 		order.getCustomer().setBalance(order.getCustomer().getBalance() - totalPrice);
 		// After payment, remove items from inventory
 		for (CartItem cartItem : order.getCart()) {
-			OfferServiceImpl.instance.applyOffer(cartItem);
-			InventoryServiceImpl.instance.removeProduct(cartItem.getProduct(), cartItem.getQuantity());
+			ShoppingService.getOfferService().applyOffer(cartItem);
+			ShoppingService.getInventoryService().removeProduct(cartItem.getProduct(), cartItem.getQuantity());
 		}
 		return order;
 	}

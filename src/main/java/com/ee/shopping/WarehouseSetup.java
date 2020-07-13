@@ -23,6 +23,8 @@ import com.ee.shopping.product.Product;
 import com.ee.shopping.product.ProductType;
 import com.ee.shopping.product.offer.OfferModel;
 import com.ee.shopping.product.offer.OfferServiceImpl;
+import com.ee.shopping.services.inventory.InventoryServiceImpl;
+import com.ee.shopping.services.inventory.ShoppingService;
 import com.ee.shopping.tax.TaxServiceImpl;
 
 /*
@@ -118,7 +120,7 @@ public class WarehouseSetup {
 				JSONObject tax = (JSONObject) taxMapping.get(i);
 				ProductType productType = ProductType.of(asString(tax, "productType"));
 				double taxRate = toDouble(tax, "taxRate");
-				TaxServiceImpl.instance.setTaxForProductType(productType, taxRate);
+				ShoppingService.getTaxService().setTaxForProductType(productType, taxRate);
 			}
 		}
 
@@ -131,7 +133,7 @@ public class WarehouseSetup {
 				boolean isApplicable = Boolean.valueOf(offer.get("isApplicable").toString());
 				int forCount = Integer.valueOf(offer.get("forCount").toString());
 				int offerCount = Integer.valueOf(offer.get("offerCount").toString());
-				OfferServiceImpl.instance
+				ShoppingService.getOfferService()
 						.setOfferForProductType(new OfferModel(isApplicable, productType, forCount, offerCount));
 			}
 		}
@@ -143,7 +145,7 @@ public class WarehouseSetup {
 			Double unitprice, String currency, Double discountAmount, String discountType) {
 		ProductType pdtType = ProductType.of(productType);
 		// collect all product types a company supportss
-		CompanyProductTypeMapping.instance.addProductTypeToCompany(company, pdtType);
+		ShoppingService.getCompanyProductTypeMapping().addProductTypeToCompany(company, pdtType);
 		UUID productCode = UUID.randomUUID();
 		Product product = null;
 
@@ -157,26 +159,29 @@ public class WarehouseSetup {
 		// Store (if already not done) reference product for the given product, so that
 		// fly-weight pattern can be applied and new object will be created when
 		// required.
-		if (ProductTypeToProductMapping.instance().getProductForPriceReference(company, pdtType) == null) {
-			ProductTypeToProductMapping.instance().addProductToProductType(company, pdtType, product);
+		if (ShoppingService.getProductTypeToProductMapping().getProductForPriceReference(company, pdtType) == null) {
+			ShoppingService.getProductTypeToProductMapping().addProductToProductType(company, pdtType, product);
 		}
 
 		// Generate required quantity of product based on spec
-		CompanyProductWarehouse.instance.accumulate(company, pdtType, quantity);
+		ShoppingService.getCompanyProductWarehouse().accumulate(company, pdtType, quantity);
 	}
 
 	public static void main(String[] args) {
+		initServices();
 		loadConfigFromFile();
 
-		CompanyProductWarehouse.instance.accumulate(new CompanyImpl("HUL"), ProductType.SOAP, 1000);
-		System.out
-				.println(CompanyProductWarehouse.instance.supply(new CompanyImpl("HUL"), ProductType.SOAP, 100).size());
+		ShoppingService.getCompanyProductWarehouse().accumulate(new CompanyImpl("HUL"), ProductType.SOAP, 1000);
+		System.out.println(ShoppingService.getCompanyProductWarehouse()
+				.supply(new CompanyImpl("HUL"), ProductType.SOAP, 100).size());
 	}
 
-	public static void clear() {
-		TaxServiceImpl.instance.clear();
-		OfferServiceImpl.instance.clear();
-		CompanyProductTypeMapping.instance.clear();
-		CompanyProductWarehouse.instance.clear();
+	public static void initServices() {
+		ShoppingService.instance.setCompanyProductTypeMapping(new CompanyProductTypeMapping());
+		ShoppingService.instance.setCompanyProductWarehouse(new CompanyProductWarehouse());
+		ShoppingService.instance.setInventoryService(new InventoryServiceImpl());
+		ShoppingService.instance.setOfferService(new OfferServiceImpl());
+		ShoppingService.instance.setProductTypeToProductMapping(new ProductTypeToProductMapping());
+		ShoppingService.instance.setTaxService(new TaxServiceImpl());
 	}
 }
